@@ -1,0 +1,33 @@
+<div class="container-fluid">
+    <div class="row">
+        <header class="bg-success text-white p-3" style="height: 25vh;">
+            <h1><b>CODER - Sistema de usuarios</b></h1>
+        </header>
+    </div>
+
+    <div class="row">
+        <div class="col-12 m-3">
+            <ul>
+                {{#each users}}
+                <li>{{this.lastName}}, {{this.firstName}} ({{this.userName}})</li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+<script>
+    // Conectamos al websocket, en este caso en el mismo servidor donde corre este cliente, puerto 3050
+    const ws = io('ws://localhost:3050');
+
+    ws.on('connect', () => { // Escuchamos el evento connect para detectar cuándo logramos conectar al servidor
+        // Emitimos el evento event_cl01
+        ws.emit('event_cl01', 'Este es el primer mensaje desde el cliente 01');
+
+        // Escuchamos por el evento server_confirm desde el servidor
+        ws.on('server_confirm', (msg) => {
+            console.log(msg);
+        });
+    })
+</script>

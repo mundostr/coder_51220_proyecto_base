@@ -1,0 +1,30 @@
+<div class="container-fluid">
+    <div class="row">
+        <header class="bg-success text-white p-3" style="height: 25vh;">
+            <h1><b>CODER - Sistema de productos</b></h1>
+        </header>
+    </div>
+
+    <div class="row">
+        <div class="col-12 m-3">
+            <ul>
+                {{#each products}}
+                <li>ID {{this.id}}, {{this.description}} (${{this.price}}) ({{this.stock}})</li>
+                {{/each}}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+<script>
+    const ws = io('ws://localhost:3050');
+
+    ws.on('connect', () => { // Escuchamos el evento connect para detectar cuándo logramos conectar al servidor
+        ws.emit('event_product', 'Este es un mensaje de producto');
+
+        ws.on('server_confirm', (msg) => {
+            console.log('El servidor ha confirmado la conexión');
+        });
+    })
+</script>
