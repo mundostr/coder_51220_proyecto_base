@@ -50,4 +50,8 @@ io.on('connection', (socket) => { // Escuchamos el evento connection por nuevas 
     socket.on('event_cl01', (data) => {
         console.log(data);
     });
+
+    socket.on('new_message', (data) => {;
+        io.emit('msg_received', data); // io.emit realiza un broadcast (redistribución) a TODOS los clientes, incluyendo el que lo generó
+    });
 });

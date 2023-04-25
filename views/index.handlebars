@@ -14,20 +14,61 @@
             </ul>
         </div>
     </div>
+
+    <div class="row">
+        <div>
+            <input type="text" id="chatBox">
+        </div>
+
+        <div>
+            <p id="messagesLog"></p>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Conectamos al websocket, en este caso en el mismo servidor donde corre este cliente, puerto 3050
-    const ws = io('ws://localhost:3050');
+    const socket = io('ws://localhost:3050');
 
-    ws.on('connect', () => { // Escuchamos el evento connect para detectar cuándo logramos conectar al servidor
+    let user;
+    const chatBox = document.getElementById('chatBox');
+    const messagesLog = document.getElementById('messagesLog');
+    
+    chatBox.addEventListener('keyup', (event) => {
+        if (event.key === 'Enter' && chatBox.value.trim().length > 0) {
+            socket.emit('new_message', { user: user, msg: chatBox.value });
+        }
+    });
+
+    socket.on('connect', () => { // Escuchamos el evento connect para detectar cuándo logramos conectar al servidor
         // Emitimos el evento event_cl01
-        ws.emit('event_cl01', 'Este es el primer mensaje desde el cliente 01');
+        // socket.emit('event_cl01', 'Cliente intentando conectarse');
 
         // Escuchamos por el evento server_confirm desde el servidor
-        ws.on('server_confirm', (msg) => {
+        socket.on('server_confirm', (msg) => {
             console.log(msg);
         });
+
+        socket.on('msg_received', (data) => {
+            messagesLog.innerHTML = `${messagesLog.innerHTML}<br>(${data.user}) ${data.msg}`;
+        });
     })
+
+    // Sweetalert
+    const swalConfig = {
+        title: 'Identificación',
+        text: 'Indique usuario:',
+        input: 'text',
+        inputValidator: (val) => {
+            return !val && 'Por favor especificar usuario';
+        },
+        allowOutsideClick: false
+    };
+
+    Swal.fire(swalConfig).then((res) => {
+        user = res.value;
+        console.log(user);
+    });
 </script>
