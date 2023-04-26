@@ -30,8 +30,8 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     // Conectamos al servidor socket.io.
-    // Mientras corra en el mismo equipo donde ejecutamos la API, podremos utilizar localhost
-    const socket = io('ws://localhost:3050');
+    // const socket = io('ws://localhost:3050');
+    const socket = io('ws://coder-proyecto-base.onrender.com:3050')
 
     let user;
     const chatBox = document.getElementById('chatBox');
