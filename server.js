@@ -14,7 +14,7 @@ const server = express();
 const httpServer = server.listen(WS_PORT, () => {
     console.log(`Servidor socketio iniciado en puerto ${WS_PORT}`);
 });
-const io = new Server(httpServer, { cors: { origin: "*" }});
+const io = new Server(httpServer, { cors: { origin: "http://localhost:3050" }});
 
 
 server.use(express.json());
