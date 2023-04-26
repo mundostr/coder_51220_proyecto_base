@@ -1,19 +1,20 @@
-import express from "express";
+import {} from 'dotenv/config'
+import express from 'express';
 import rUsers from './api/users/users.routes.js';
 import rProducts from './api/products/products.routes.js';
 import { __dirname } from './utils.js';
 import { engine } from 'express-handlebars';
 import { Server } from 'socket.io';
 
-const PORT = 3000;
-const WS_PORT = 3050;
+const PORT = parseInt(process.env.PORT || 3000);
+const WS_PORT = parseInt(process.env.WS_PORT || 3050);
 
 // Servidor Express base
 const server = express();
 const httpServer = server.listen(WS_PORT, () => {
     console.log(`Servidor socketio iniciado en puerto ${WS_PORT}`);
 });
-const io = new Server(httpServer, { cors: { origin: "http://localhost:3000" }});
+const io = new Server(httpServer, { cors: { origin: "*" }});
 
 
 server.use(express.json());
