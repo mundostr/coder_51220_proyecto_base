@@ -55,16 +55,11 @@ io.on('connection', (socket) => { // Escuchamos el evento connection por nuevas 
     // Emitimos el evento server_confirm
     socket.emit('server_confirm', 'Conexión recibida');
     
-    socket.on("disconnect", (reason) => {
-        console.log(`Cliente desconectado (${socket.id}): ${reason}`);
-    });
-    
-    // Escuchamos por el evento evento_cl01 desde el cliente
-    socket.on('event_cl01', (data) => {
-        console.log(data);
-    });
-
     socket.on('new_message', (data) => {;
         io.emit('msg_received', data); // io.emit realiza un broadcast (redistribución) a TODOS los clientes, incluyendo el que lo generó
+    });
+    
+    socket.on("disconnect", (reason) => {
+        console.log(`Cliente desconectado (${socket.id}): ${reason}`);
     });
 });

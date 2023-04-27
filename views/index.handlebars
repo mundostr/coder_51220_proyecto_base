@@ -31,6 +31,7 @@
 <script>
     // Conectamos al servidor socket.io.
     const socket = io('ws://localhost:3050');
+    // const socket = io(`${location.host}:3050`);
 
     let user;
     const chatBox = document.getElementById('chatBox');
