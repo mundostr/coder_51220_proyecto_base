@@ -5,6 +5,7 @@ import rProducts from './api/products/products.routes.js';
 import { __dirname } from './utils.js';
 import { engine } from 'express-handlebars';
 import { Server } from 'socket.io';
+import cors from 'cors';
 
 const PORT = parseInt(process.env.PORT || 3000);
 const WS_PORT = parseInt(process.env.WS_PORT || 3050);
@@ -14,9 +15,20 @@ const server = express();
 const httpServer = server.listen(WS_PORT, () => {
     console.log(`Servidor socketio iniciado en puerto ${WS_PORT}`);
 });
-const io = new Server(httpServer, { cors: { origin: "http://localhost:3050" }});
+const io = new Server(httpServer, {
+    cors: {
+        origin: "*",
+        methods: ["PUT", "GET", "POST", "DELETE", "OPTIONS"],
+        credentials: false
+    }
+});
 
+const corsOptions = {
+    origin: "*",
+    optionsSuccessStatus: 200
+};
 
+server.use(cors(corsOptions));
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 
