@@ -1,12 +1,12 @@
 {
-  "name": "ejemplo_base",
-  "version": "1.0.0",
+  "name": "proyecto_base",
+  "version": "2.0.0",
   "description": "",
   "main": "server.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node src/server.js"
   },
   "engines": {
     "node": ">=16.0.0"

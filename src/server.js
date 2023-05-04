@@ -55,7 +55,7 @@ app.use('/public', express.static(`${__dirname}/public`));
 // Motor de plantillas
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
-app.set('views', './views');
+app.set('views', `${__dirname}/views`);
 
 server.listen(PORT, () => {
     console.log(`Servidor API/Socket.io iniciado en puerto ${PORT}`);

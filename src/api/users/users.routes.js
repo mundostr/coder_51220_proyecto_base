@@ -1,5 +1,5 @@
 import { Router } from "express";
-import Users from './users.js';
+import Users from './users.class.js';
 import { __dirname } from '../../utils.js';
 
 // Exportamos todo el paquete de endpoints como función (userRoutes) que toma un argumento (io)
@@ -10,7 +10,7 @@ const userRoutes = (io) => {
     
     router.get('/users_index', async (req, res) => {
         const users = await manager.getUsers();
-        res.render('index', {
+        res.render('users_index', {
             users: users
         });
     });
