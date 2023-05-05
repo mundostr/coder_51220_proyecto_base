@@ -1,12 +1,13 @@
 import { Router } from "express";
-import Users from './users.class.js';
+import Users from './users.dbclass.js';
 import { __dirname } from '../../utils.js';
 
 // Exportamos todo el paquete de endpoints como función (userRoutes) que toma un argumento (io)
 // de esta manera al importarlo en server, podremos "inyectar" io para emitir eventos desde aquí
 const userRoutes = (io) => {
     const router = Router();
-    const manager = new Users(`${__dirname}/data/users.json`);
+    const manager = new Users();
+    // const manager = new Users(`${__dirname}/data/users.json`);
     
     router.get('/users_index', async (req, res) => {
         const users = await manager.getUsers();
@@ -15,12 +16,17 @@ const userRoutes = (io) => {
         });
     });
     
-    router.get('/users', async (req, res) => {
+    router.get('/users/:id?', async (req, res) => { // ? indica que el parámetro es opcional
         try {
-            const users = await manager.getUsers();
-            res.status(200).send({ status: 'OK', data: users });
+            if (req.params.id === undefined) {
+                const users = await manager.getUsers();
+                res.status(200).send({ status: 'OK', data: users });
+            } else {
+                const user = await manager.getUserById(req.params.id);
+                res.status(200).send({ status: 'OK', data: user });
+            }
         } catch (err) {
-            res.status(500).send({ status: 'ERR', error: err });
+            res.status(500).send({ status: 'ERR', error: 'No se encuentra el usuario' });
         }
     });
     
@@ -33,18 +39,17 @@ const userRoutes = (io) => {
             if (manager.checkStatus() === 1) {
                 res.status(200).send({ status: 'OK', msg: manager.showStatusMsg() });
             } else {
-                res.status(400).send({ status: 'ERR1', error: manager.showStatusMsg() });
+                res.status(400).send({ status: 'ERR', error: manager.showStatusMsg() });
             }
         } catch (err) {
             console.error(err);
-            res.status(500).send({ status: 'ERR2', error: err });
+            res.status(500).send({ status: 'ERR', error: 'No se puede agregar el usuario' });
         }
     });
     
-    router.put('/users', async (req, res) => {
+    router.put('/users/:id', async (req, res) => {
         try {
-            const { id, field, data } = req.body;
-            await manager.updateUser(id, field, data);
+            await manager.updateUser(req.params.id, req.body);
         
             if (manager.checkStatus() === 1) {
                 res.status(200).send({ status: 'OK', msg: manager.showStatusMsg() });
@@ -52,13 +57,13 @@ const userRoutes = (io) => {
                 res.status(400).send({ status: 'ERR', error: manager.showStatusMsg() });
             }
         } catch (err) {
-            res.status(500).send({ status: 'ERR', error: err });
+            res.status(500).send({ status: 'ERR', error: 'No se puede actualizar el usuario' });
         }
     });
     
-    router.delete('/users', async(req, res) => {
+    router.delete('/users/:id', async(req, res) => {
         try {
-            await manager.deleteUser(req.body.id);
+            await manager.deleteUser(req.params.id);
         
             if (manager.checkStatus() === 1) {
                 res.status(200).send({ status: 'OK', msg: manager.showStatusMsg() });

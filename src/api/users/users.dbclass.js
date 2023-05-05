@@ -1,10 +1,10 @@
 import fs from 'fs';
 import crypto from 'crypto';
+import mongoose from 'mongoose';
+import userModel from './users.model.js';
 
 class Users {
-    constructor(path) {
-        this.path = path; // Ruta archivo registro usuarios
-        this.latestId = 1;
+    constructor() {
         this.users = [];
         this.status = 0;
         this.statusMsg = "inicializado";
@@ -41,14 +41,9 @@ class Users {
         try {
             if (!Users.#objEmpty(user) && Users.#verifyRequiredFields(user)) {
                 user.password = Users.#generarSha256(user.password);
-                this.users = await this.#readUsersFromFile();
-
-                this.latestId = this.users[this.users.length - 1].id;
-                this.users.push({ id: ++this.latestId, ...user });
-                await fs.promises.writeFile(this.path, JSON.stringify(this.users));
-                
+                const process = await userModel.create(user);
                 this.status = 1;
-                this.statusMsg = "Usuario registrado en archivo";
+                this.statusMsg = "Usuario registrado en bbdd";
             } else {
                 this.status = -1;
                 this.statusMsg = `Faltan campos obligatorios (${Users.requiredFields.join(', ')})`;
@@ -61,7 +56,7 @@ class Users {
 
     getUsers = async () => {
         try {
-            const users = await this.#readUsersFromFile();
+            const users = await userModel.find();
             
             this.status = 1;
             this.statusMsg = 'Usuarios recuperados';
@@ -75,39 +70,24 @@ class Users {
     getUserById = async (id) => {
         try {
             this.status = 1;
-            const users = await this.#readUsersFromFile();
-            const user = users.find(user => user.id === id);
-
-            if (user) return user;
-
-            this.status = -1;
-            this.statusMsg = "Usuario no encontrado";
-            return {};
+            const user = userModel.findById(id);
+            return user;
         } catch (err) {
             this.status = -1;
             this.statusMsg = `getUserById: ${err}`;
         }
     }
 
-    updateUser = async (id, field, data) => {
+    updateUser = async (id, data) => {
         try {
-            if (id == undefined || field == undefined || data == undefined) {
+            if (data === undefined || Object.keys(data).length === 0) {
                 this.status = -1;
-                this.statusMsg = "Se requiere body con id, field y data";
+                this.statusMsg = "Se requiere body con data";
             } else {
-                const users = await this.#readUsersFromFile();
-                const index = users.findIndex(user => user.id === id);
-    
-                if (index === -1) {
-                    this.status = -1;
-                    this.statusMsg = "ID no encontrado";
-                    return;
-                }
-    
-                users[index][field] = data;
-                await fs.promises.writeFile(this.path, JSON.stringify(users));
+                // Con mongoose.Types.ObjectId realizamos el casting para que el motor reciba el id en el formato correcto
+                const process = await userModel.updateOne({ '_id': new mongoose.Types.ObjectId(id) }, data);
                 this.status = 1;
-                this.statusMsg = "Usuario actualizado";
+                process.modifiedCount === 0 ? this.statusMsg = "El ID no existe o no hay cambios por realizar": this.statusMsg = "Usuario actualizado";
             }
         } catch (err) {
             this.status = -1;
@@ -117,18 +97,9 @@ class Users {
 
     deleteUser = async (id) => {
         try {
-            const users = await this.#readUsersFromFile();
-            const usersFiltered = users.filter(user => user.id !== id);
-
-            if (usersFiltered.length === users.length) {
-                this.status = -1;
-                this.statusMsg = "ID no encontrado";
-                return;
-            }
-
-            await fs.promises.writeFile(this.path, JSON.stringify(usersFiltered));
+            const process = await userModel.deleteOne({ '_id': new mongoose.Types.ObjectId(id) });
             this.status = 1;
-            this.statusMsg = "Usuario borrado";
+            process.deletedCount === 0 ? this.statusMsg = "El ID no existe": this.statusMsg = "Usuario borrado";
         } catch (err) {
             this.status = -1;
             this.statusMsg = `deleteUser: ${err}`;

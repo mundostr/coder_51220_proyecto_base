@@ -1,7 +1,12 @@
+/*
+Integración de clases, express (api routes + estáticos), socket.io, handlebars, fs y mongoose
+*/
+
 import {} from 'dotenv/config'
 
 import http from 'http';
 import express from 'express';
+import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import { engine } from 'express-handlebars';
 
@@ -12,7 +17,8 @@ import { __dirname } from './utils.js';
 
 // recordar generar un archivo de entorno .env con la variable PORT
 // y utilizar la importación de dotenv config como primer línea arriba
-const PORT = parseInt(process.env.PORT || 3000);
+const PORT = parseInt(process.env.PORT) || 3000;
+const MONGOOSE_URL = process.env.MONGOOSE_URL;
 
 // Servidor Express y Socket.io compartiendo puerto
 const app = express();
@@ -41,6 +47,7 @@ io.on('connection', (socket) => { // Escuchamos el evento connection por nuevas 
     });
 });
 
+// Parseo correcto de urls
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -57,6 +64,15 @@ app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/views`);
 
-server.listen(PORT, () => {
-    console.log(`Servidor API/Socket.io iniciado en puerto ${PORT}`);
-});
+// Activación del servidor
+try {
+    // mongodb+srv://coder51220:coder2023@cluster0.4qaobt3.mongodb.net/coder51220
+    // mongodb://127.0.0.1:27017/coder51220
+    await mongoose.connect(MONGOOSE_URL);
+    
+    server.listen(PORT, () => {
+        console.log(`Servidor API/Socket.io iniciado en puerto ${PORT}`);
+    });
+} catch(err) {
+    console.log('No se puede conectar con el servidor de bbdd');
+}
