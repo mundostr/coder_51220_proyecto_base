@@ -23,6 +23,7 @@ const MONGOOSE_URL = process.env.MONGOOSE_URL;
 // Servidor Express y Socket.io compartiendo puerto
 const app = express();
 const server = http.createServer(app);
+// Creamos nueva instancia para el servidor socket.io, activando módulo cors con acceso desde cualquier lugar (*)
 const io = new Server(server, {
     cors: {
         origin: "*",
