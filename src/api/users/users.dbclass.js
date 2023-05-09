@@ -1,4 +1,3 @@
-import fs from 'fs';
 import crypto from 'crypto';
 import mongoose from 'mongoose';
 import userModel from './users.model.js';
@@ -22,11 +21,6 @@ class Users {
 
     static #objEmpty (obj) {
         return Object.keys(obj).length === 0;
-    }
-
-    #readUsersFromFile = async () => {
-        const data = await fs.promises.readFile(this.path, 'utf-8');
-        return data === '' ? [] : JSON.parse(data);
     }
 
     checkStatus = () => {
