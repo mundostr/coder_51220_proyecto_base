@@ -102,8 +102,9 @@ class Users {
 
     validateUser = async (user, pass) => {
         try {
-            const users = await this.#readUsersFromFile();
-            const userExist = users.find(item => item.userName === user);
+            // const users = await this.#readUsersFromFile();
+            // const userExist = users.find(item => item.userName === user);
+            
             if (!userExist) {
                 this.status = "Usuario no válido";
                 return {};

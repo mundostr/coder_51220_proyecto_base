@@ -44,7 +44,7 @@ class Products {
 
     getProducts = async () => {
         try {
-            const products = await productModel.find();
+            const products = await productModel.find().lean();
             
             this.status = 1;
             this.statusMsg = 'Productos recuperados';
