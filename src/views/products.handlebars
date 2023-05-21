@@ -1,38 +1,75 @@
 <style>
+    /*
+    Podemos integrar estilos, html y código js en el mismo archivo
+    como suelen hacer distintos frameworks, o separarlos e incluirlos
+    */
     .custom-list-item {
         background: #e1e1e1;
     }
+
+    .active>.page-link {
+        background-color: #157347;
+        border-color: #157347;
+    }
 </style>
 
-<div class="row justify-content-end" style="background-color: #f1f1f1;">
-    <div class="col-1 p-3">
-        <button class="btn btn-success" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
+<div class="row">
+    <div class="d-flex justify-content-end p-3" style="background-color: #f1f1f1;">
+        <a href="{{baseUrl}}/logout" class="btn btn-success"><i class="fas fa-sign-out-alt"></i> Salir</a>
     </div>
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-md-6 col-xs-12 p-3">
-        <h2 class="mb-4"><b>Listado de productos en existencia</b></h2>
+    <h2 class="mt-4 mb-4"><b>Listado de productos en existencia ({{pagination.totalDocs}} en total)</b></h2>
 
-        <ul class="list-group">
-            {{!--
-            Recordar utilizar la palabra reservada this dentro del ciclo
-            para acceder a los datos del elemento actual
-            --}}
-            {{#each products}}
-            <li class="list-group-item d-flex justify-content-between align-items-center custom-list-item mb-3"
-                >ID {{this.id}}, {{this.description}} (${{this.price}}) ({{this.stock}})
-                <span class="badge">
+    <div class="col-md-4 col-xs-12">
+        <nav aria-label="Navigation row">
+            <ul class="pagination">
+                {{!--
+                Aprovechamos las variables recibidas para armar la barra de paginación
+                --}}
+                {{#if pagination.hasPrevPage}}
+                    <li class="page-item"><a class="page-link" href="{{pagination.prevPageUrl}}"><<</a></li>
+                {{else}}
+                    <li class="page-item disabled"><a class="page-link" href="{{pagination.prevPageUrl}}"><<</a></li>
+                {{/if}}
+                
+                {{#each pagination.pagesArray}}
+                    <li class="page-item"><a class="page-link" href="{{baseUrl}}?page={{this.index}}">{{this.indexPgBar}}</a></li>
+                {{/each}}
+
+                {{#if pagination.hasNextPage}}
+                    <li class="page-item"><a class="page-link" href="{{pagination.nextPageUrl}}">>></a></li>
+                {{else}}
+                    <li class="page-item disabled"><a class="page-link" href="{{pagination.nextPageUrl}}">>></a></li>
+                {{/if}}
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    {{!--
+    Utilizamos #each para recorrer la lista de productos.
+    Recordar utilizar la palabra reservada this dentro del ciclo
+    para acceder a los datos del elemento actual
+    --}}
+    <div class="col-md-4 col-xs-12 p-3" style="background-color: #e1e1e1;">
+    {{#each products}}
+        <div class="card mb-4">
+            <img src="{{this.thumbnail}}" class="card-img-top" alt="Avatar" title="Avatar">
+                    
+            <div class="card-body">
+                <h5 class="card-title">{{this.title}}</h5>
+                <p class="card-text">{{this.description}}</p>
+                <div style="width: 100%; text-align: right;">
                     <button class="btn btn-success"><i class="fas fa-cart-plus"></i> Agregar al carro</button>
-                </span>
-            </li>
-            {{/each}}
-        </ul>
+                </div>
+            </div>
+        </div>
+    {{/each}}
     </div>
 </div>
 
 <script>
-    const handleLogout = () => {
-        window.location.href = 'http://localhost:3000/logout';
-    }
 </script>

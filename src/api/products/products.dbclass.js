@@ -55,6 +55,24 @@ class Products {
         }
     }
 
+    getProductsPaginated = async (offset, itemsPerPage) => {
+        try {
+            const queryOptions = {
+                offset: offset,
+                limit: itemsPerPage,
+                lean: true // habilitamos esta opción para evitar problemas con Handlebars
+            }
+            const products = await productModel.paginate({}, queryOptions);
+            
+            this.status = 1;
+            this.statusMsg = 'Productos recuperados';
+            return products;
+        } catch (err) {
+            this.status = -1;
+            this.statusMsg = `getProducts: ${err}`;
+        }
+    }
+
     getProductById = async (id) => {
         try {
             this.status = 1;

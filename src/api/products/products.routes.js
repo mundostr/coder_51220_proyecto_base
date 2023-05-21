@@ -1,19 +1,11 @@
 import { Router } from "express";
-import Products from './products.class.js';
+import Products from './products.dbclass.js';
 import { __dirname } from '../../utils.js';
-import userRoutes from "../users/users.routes.js";
 
 const router = Router();
-const manager = new Products(`${__dirname}/data/products.json`);
+const manager = new Products();
 
 const productRoutes = (io) => {
-    router.get('/products_index', async (req, res) => {
-        const products = await manager.getProducts();
-        res.render('index_products', {
-            products: products
-        });
-    });
-    
     router.get('/products', async (req, res) => {
         try {
             const products = await manager.getProducts();

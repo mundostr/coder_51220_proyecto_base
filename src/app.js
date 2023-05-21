@@ -1,15 +1,19 @@
 /*
-Proyecto base, integra:
-## clases
+PROYECTO BASE, INTEGRACION DE ELEMENTOS
+
+## variables de entorno
+## clases (manejo bbdd)
+## clases (manejo fs)
 ## express rutas api rest
 ## express rutas estáticas
 socket.io
 ## handlebars
-fs
-## mongoose base
-mongoos indices, population, aggregate, paginate
-cookies
+## mongoose base, índices, paginate
+mongoose population, aggregate
 ## sessions, primer autenticación básica de usuario
+autenticación con middleware, cookies
+
+Los contenidos de prueba están generados con https://www.mockaroo.com/
 */
 
 import {} from 'dotenv/config'
@@ -33,6 +37,8 @@ import { __dirname } from './utils.js';
 const PORT = parseInt(process.env.PORT) || 3000;
 const MONGOOSE_URL = process.env.MONGOOSE_URL || 'mongodb://127.0.0.1';
 const SECRET = process.env.SECRET;
+const PRODUCTS_PER_PAGE = 10;
+const BASE_URL = `http://localhost:${PORT}`;
 
 
 // SERVIDOR EXPRESS y SOCKET.IO INTEGRADO
@@ -60,7 +66,8 @@ app.use(session({
 
 // Endpoints API REST
 // "Inyectamos" el objeto io para poder utilizarlo en los endpoints
-app.use('/', mainRoutes(io));
+// En mainRoutes "inyectamos" también la cantidad de productos a mostrar por página
+app.use('/', mainRoutes(io, BASE_URL, PRODUCTS_PER_PAGE));
 app.use('/api', userRoutes(io));
 app.use('/api', productRoutes(io));
 
@@ -71,7 +78,6 @@ app.use('/public', express.static(`${__dirname}/public`));
 app.engine('handlebars', engine());
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/views`);
-
 
 // EVENTOS SERVIDOR SOCKET.IO INTEGRADO
 io.on('connection', (socket) => { // Escuchamos el evento connection por nuevas conexiones de clientes

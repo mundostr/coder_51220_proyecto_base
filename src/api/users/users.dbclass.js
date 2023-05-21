@@ -102,21 +102,8 @@ class Users {
 
     validateUser = async (user, pass) => {
         try {
-            // const users = await this.#readUsersFromFile();
-            // const userExist = users.find(item => item.userName === user);
-            
-            if (!userExist) {
-                this.status = "Usuario no válido";
-                return {};
-            }
-
-            const match = users.find(user => user.password === Users.#generarSha256(pass));
-            if (match) {
-                return match;
-            }
-
-            this.status = "Contraseña no válida";
-            return {};
+            // Por ahora una validación muy sencilla, encriptando la clave recibida y comparando usuario y clave
+            return await userModel.findOne({ userName: user, password: crypto.createHash('sha256').update(pass).digest('hex')});
         } catch (err) {
             this.status = `validateUser: ${err}`;
         }
