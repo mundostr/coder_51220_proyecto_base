@@ -6,12 +6,13 @@ PROYECTO BASE, INTEGRACION DE ELEMENTOS
 ## clases (manejo fs)
 ## express rutas api rest
 ## express rutas estáticas
-socket.io
+## socket.io servidor y cliente
 ## handlebars
 ## mongoose base, índices, paginate
 mongoose population, aggregate
+cookies
 ## sessions, primer autenticación básica de usuario
-autenticación con middleware, cookies
+autenticación con middleware
 
 Los contenidos de prueba están generados con https://www.mockaroo.com/
 */
@@ -61,6 +62,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({
     secret: SESSION_SECRET,
     resave: true, // no caduca luego del tiempo de inactividad
+    // resave: false,
+    // cookie: { maxAge: 30 * 1000 }, // la sesión expira luego de 30 segundos de INACTIVIDAD
     saveUninitialized: true // se guarda el objeto de sesión aún estando vacío
 }));
 
