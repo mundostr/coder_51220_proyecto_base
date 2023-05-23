@@ -16,14 +16,7 @@ const userRoutes = (io) => {
             res.status(401).send({ status: 'ERR', error: 'No tiene autorización para realizar esta solicitud' });
         }
     }
-    
-    router.get('/users_index', validate, async (req, res) => {
-        const users = await manager.getUsers();
-        res.render('users_index', {
-            users: users
-        });
-    });
-    
+       
     router.get('/users/:id?', validate, async (req, res) => { // ? indica que el parámetro es opcional
         try {
             if (req.params.id === undefined) {
