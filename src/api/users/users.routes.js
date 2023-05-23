@@ -8,15 +8,23 @@ const userRoutes = (io) => {
     const router = Router();
     const manager = new Users();
     // const manager = new Users(`${__dirname}/data/users.json`);
+
+    const validate = async (req, res, next) => {
+        if (req.session.userValidated) {
+            next();
+        } else {
+            res.status(401).send({ status: 'ERR', error: 'No tiene autorización para realizar esta solicitud' });
+        }
+    }
     
-    router.get('/users_index', async (req, res) => {
+    router.get('/users_index', validate, async (req, res) => {
         const users = await manager.getUsers();
         res.render('users_index', {
             users: users
         });
     });
     
-    router.get('/users/:id?', async (req, res) => { // ? indica que el parámetro es opcional
+    router.get('/users/:id?', validate, async (req, res) => { // ? indica que el parámetro es opcional
         try {
             if (req.params.id === undefined) {
                 const users = await manager.getUsers();
@@ -30,7 +38,7 @@ const userRoutes = (io) => {
         }
     });
     
-    router.post('/users', async (req, res) => {
+    router.post('/users', validate, async (req, res) => {
         try {
             await manager.addUser(req.body);
             // Al haber "inyectado" io, podemos emitir eventos sin problemas al socket
@@ -47,7 +55,7 @@ const userRoutes = (io) => {
         }
     });
     
-    router.put('/users/:id', async (req, res) => {
+    router.put('/users/:id', validate, async (req, res) => {
         try {
             await manager.updateUser(req.params.id, req.body);
         
@@ -61,7 +69,7 @@ const userRoutes = (io) => {
         }
     });
     
-    router.delete('/users/:id', async(req, res) => {
+    router.delete('/users/:id', validate, async(req, res) => {
         try {
             await manager.deleteUser(req.params.id);
         

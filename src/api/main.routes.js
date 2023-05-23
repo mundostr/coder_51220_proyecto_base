@@ -36,6 +36,7 @@ const mainRoutes = (io, baseUrl, productsPerPage) => {
                 hasNextPage: result.hasNextPage,
                 pagesArray: pagesArray
             }
+            
             res.render('products', { products: result.docs, pagination: pagination });
         } else {
             res.render('login', {
