@@ -108,5 +108,5 @@ try {
         console.log(`Servidor iniciado en puerto ${SERVER_PORT}`);
     });
 } catch(err) {
-    console.log('No se puede conectar con el servidor de bbdd');
+    console.log(`No se puede conectar con el servidor de bbdd (${err.message})`);
 }
