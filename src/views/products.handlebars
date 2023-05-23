@@ -63,7 +63,7 @@
                 <h5 class="card-title">{{this.title}}</h5>
                 <p class="card-text">{{this.description}}</p>
                 <div style="width: 100%; text-align: right;">
-                    <button class="btn btn-success"><i class="fas fa-cart-plus"></i> Agregar al carro</button>
+                    <button class="btn btn-success" onclick="addToCart('{{this.id}}')"><i class="fas fa-cart-plus"></i> Agregar al carro</button>
                 </div>
             </div>
         </div>
@@ -72,4 +72,24 @@
 </div>
 
 <script>
+    const socket = io('ws://localhost:3000');
+
+    socket.on('connect', () => { // Escuchamos el evento connect para detectar cuándo logramos conectar al servidor
+        // Escuchamos por el evento server_confirm desde el servidor
+        socket.on('server_confirm', (data) => {
+            console.log("El servidor ha confirmado la conexión");
+            console.log(data);
+        });
+        
+        // Se recibe una notificación de este evento desde un broadcast del servidor
+        // a pesar que ha sido generado desde esta misma plantilla en la función addToCart
+        socket.on('product_added_to_cart', (data) => {
+            console.log('Se disparó el evento product_added_to_cart con el id', data);
+        });
+    })
+
+    const addToCart = (product_id) => {
+        console.log('Agregar al carrito producto', product_id);
+        socket.emit('new_product_in_cart', product_id);
+    }
 </script>

@@ -88,7 +88,7 @@ io.on('connection', (socket) => { // Escuchamos el evento connection por nuevas 
     
     socket.on('new_product_in_cart', (data) => {;
         // io.emit realiza un broadcast (redistribución) a TODOS los clientes, incluyendo el que lo generó
-        io.emit('msg_received', data);
+        io.emit('product_added_to_cart', data);
     });
     
     socket.on("disconnect", (reason) => {
