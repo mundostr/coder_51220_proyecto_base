@@ -31,14 +31,14 @@ import productRoutes from './api/products/products.routes.js';
 
 import { __dirname } from './utils.js';
 
-// recordar generar un archivo de entorno .env con la variable PORT
-// y utilizar la importación de dotenv config como primer línea arriba
-// para evitar problemas, mantener el archivo .env en el directorio raíz (donde está el package.json)
-const PORT = parseInt(process.env.PORT) || 3000;
+// recordar generar un archivo .env con las variables de entorno
+// y utilizar la importación de dotenv config como primer línea arriba.
+// Para evitar problemas, mantener el archivo .env en el directorio raíz (donde está el package.json)
+const SERVER_PORT = parseInt(process.env.SERVER_PORT) || 3000;
 const MONGOOSE_URL = process.env.MONGOOSE_URL || 'mongodb://127.0.0.1';
-const SECRET = process.env.SECRET;
+const SESSION_SECRET = process.env.SESSION_SECRET;
+const BASE_URL = `http://localhost:${SERVER_PORT}`;
 const PRODUCTS_PER_PAGE = 10;
-const BASE_URL = `http://localhost:${PORT}`;
 
 
 // SERVIDOR EXPRESS y SOCKET.IO INTEGRADO
@@ -59,7 +59,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Gestión de sesiones
 app.use(session({
-    secret: SECRET,
+    secret: SESSION_SECRET,
     resave: true, // no caduca luego del tiempo de inactividad
     saveUninitialized: true // se guarda el objeto de sesión aún estando vacío
 }));
@@ -100,8 +100,8 @@ io.on('connection', (socket) => { // Escuchamos el evento connection por nuevas 
 try {
     await mongoose.connect(MONGOOSE_URL);
     
-    server.listen(PORT, () => {
-        console.log(`Servidor API/Socket.io iniciado en puerto ${PORT}`);
+    server.listen(SERVER_PORT, () => {
+        console.log(`Servidor iniciado en puerto ${SERVER_PORT}`);
     });
 } catch(err) {
     console.log('No se puede conectar con el servidor de bbdd');
