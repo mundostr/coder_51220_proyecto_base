@@ -12,7 +12,7 @@ PROYECTO BASE, INTEGRACION DE ELEMENTOS
 mongoose population, aggregate
 cookies
 ## sessions, primer autenticación básica de usuario
-autenticación con middleware
+## autenticación con middleware
 
 Los contenidos de prueba están generados con https://www.mockaroo.com/
 */
