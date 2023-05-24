@@ -11,8 +11,8 @@ PROYECTO BASE, INTEGRACION DE ELEMENTOS
 ## mongoose base, índices, paginate
 mongoose population, aggregate
 cookies
-## sessions, primer autenticación básica de usuario
-## autenticación con middleware
+## sessions en memoria, disco y MongoDB
+## autenticación básica y con middleware
 
 Los contenidos de prueba están generados con https://www.mockaroo.com/
 */
@@ -25,6 +25,8 @@ import mongoose from 'mongoose';
 import { Server } from 'socket.io';
 import { engine } from 'express-handlebars';
 import session from 'express-session';
+// import FileStore from 'session-file-store';
+import MongoStore from 'connect-mongo';
 
 import mainRoutes from './api/main.routes.js';
 import userRoutes from './api/users/users.routes.js';
@@ -59,18 +61,25 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Gestión de sesiones
+// Opción 1: sesiones persistentes en archivo
+// (ttl: segs p/ caducar la sesión, reapInterval: segs p/ limpiar de disco sesiones caducadas)
+// const fileStorage = new FileStore(session);
+// const store = new fileStorage({ path: `${__dirname}/sessions/`, ttl: 30, reapInterval: 300, retries: 0 });
+// Opción 2: sesiones persistentes en MongoDB
+const store = MongoStore.create({ mongoUrl: MONGOOSE_URL, mongoOptions: {}, ttl: 30 });
 app.use(session({
+    // sin store, manejamos sesiones solo en memoria
+    store: store,
     secret: SESSION_SECRET,
-    resave: true, // no caduca luego del tiempo de inactividad
-    // resave: false,
+    resave: false,
+    saveUninitialized: false,
     // cookie: { maxAge: 30 * 1000 }, // la sesión expira luego de 30 segundos de INACTIVIDAD
-    saveUninitialized: true // se guarda el objeto de sesión aún estando vacío
 }));
 
 // Endpoints API REST
 // "Inyectamos" el objeto io para poder utilizarlo en los endpoints
-// En mainRoutes "inyectamos" también la cantidad de productos a mostrar por página
-app.use('/', mainRoutes(io, BASE_URL, PRODUCTS_PER_PAGE));
+// En mainRoutes "inyectamos" también otros datos para poder utilizarlos internamente
+app.use('/', mainRoutes(io, store, BASE_URL, PRODUCTS_PER_PAGE));
 app.use('/api', userRoutes(io));
 app.use('/api', productRoutes(io));
 
