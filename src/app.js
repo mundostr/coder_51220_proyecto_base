@@ -8,8 +8,8 @@ PROYECTO BASE, INTEGRACION DE ELEMENTOS
 ## express rutas estáticas
 ## socket.io servidor y cliente
 ## handlebars
-## mongoose base, índices, paginate
-mongoose population, aggregate
+## mongoose base, índices, paginate, population
+mongoose aggregate
 cookies
 ## sessions en memoria, disco y MongoDB
 ## autenticación básica y con middleware
@@ -31,6 +31,7 @@ import MongoStore from 'connect-mongo';
 import mainRoutes from './api/main.routes.js';
 import userRoutes from './api/users/users.routes.js';
 import productRoutes from './api/products/products.routes.js';
+import cartRoutes from './api/carts/carts.routes.js';
 
 import { __dirname } from './utils.js';
 
@@ -82,6 +83,7 @@ app.use(session({
 app.use('/', mainRoutes(io, store, BASE_URL, PRODUCTS_PER_PAGE));
 app.use('/api', userRoutes(io));
 app.use('/api', productRoutes(io));
+app.use('/api', cartRoutes());
 
 // Contenidos estáticos
 app.use('/public', express.static(`${__dirname}/public`));
